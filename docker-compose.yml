@@ -1,0 +1,23 @@
+version: '2.2'
+
+services:
+  app:
+    image: 'tenpo-calculator-service:latest'
+    build:
+      context: .
+    container_name: app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
+  db:
+    image: 'postgres:13.1-alpine'
+    container_name: db
+    ports:
+      - 5435:5432
+    expose:
+      - "5435"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=mysecretpassword
