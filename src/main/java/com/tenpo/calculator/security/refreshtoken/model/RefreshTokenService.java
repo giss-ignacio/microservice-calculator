@@ -5,11 +5,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.tenpo.calculator.security.JwtTool;
-import com.tenpo.calculator.security.user.application.UserTokenDto;
 import com.tenpo.calculator.security.user.model.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

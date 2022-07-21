@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class CalculatorResponseDto {
     @JsonProperty
-    Double numbersSum;
+    private Double numbersSum;
 
     public CalculatorResponseDto(){
     }

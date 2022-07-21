@@ -1,5 +1,6 @@
 package com.tenpo.calculator.security.application;
 
+import com.tenpo.calculator.history.model.HistoryService;
 import com.tenpo.calculator.security.JwtTool;
 import com.tenpo.calculator.security.refreshtoken.application.RefreshTokenDto;
 import com.tenpo.calculator.security.refreshtoken.model.RefreshToken;
@@ -33,13 +34,16 @@ public class AuthController {
     private UserService userService;
 
     @Autowired
-    RefreshTokenService refreshTokenService;
+    private RefreshTokenService refreshTokenService;
 
     @Autowired
     private AuthenticationManager authenticationManager;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private HistoryService historyService;
 
     @Autowired
     private JwtTool jwtTool;
@@ -59,9 +63,13 @@ public class AuthController {
                             userDto.getName(),
                             userDto.getRole()));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Failed to register user with error: " + e.getMessage());
+            ResponseEntity<String> response = ResponseEntity.badRequest().body("Failed to register user with error: " + e.getMessage());
+            historyService.log(userDto, response, "/signup");
+            return response;
         }
-        return ResponseEntity.ok().build();
+        ResponseEntity<String> response = ResponseEntity.ok("New user registered");
+        historyService.log(userDto, response, "/signup");
+        return response;
     }
 
     @PostMapping("/login")
@@ -77,14 +85,17 @@ public class AuthController {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(userDto.getUsername(), userDto.getPassword()));
         } catch (AuthenticationException e) {
-            return ResponseEntity.badRequest().body("Bad user credentials");
+            ResponseEntity<String> response = ResponseEntity.badRequest().body("Bad user credentials");
+            historyService.log(userDto, response, "/login");
+            return response;
         }
 
         String jwt = jwtTool.createJWT(userDto.getUsername());
 
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDto.getUsername());
-
-        return ResponseEntity.ok(new UserTokenDto(userDto.getUsername(), jwt, refreshToken.getToken()));
+        ResponseEntity<UserTokenDto> response = ResponseEntity.ok(new UserTokenDto(userDto.getUsername(), jwt, refreshToken.getToken()));
+        historyService.log(userDto, response, "/login");
+        return response;
     }
 
     @PostMapping("/refreshtoken")
@@ -98,10 +109,16 @@ public class AuthController {
         String refreshToken = refreshTokenDto.getRefreshToken();
         try {
             String newToken = refreshTokenService.refresh(refreshToken);
-            return ResponseEntity.ok(new UserTokenDto(refreshTokenDto.getUsername(), newToken, refreshTokenDto.getRefreshToken()));
+
+            ResponseEntity<UserTokenDto> response = ResponseEntity.ok(new UserTokenDto(refreshTokenDto.getUsername(), newToken, refreshTokenDto.getRefreshToken()));
+            historyService.log(refreshTokenDto, response, "/refreshtoken");
+
+            return response;
         } catch (TokenRefreshFailedException e) {
-            return ResponseEntity.badRequest().body(
+            ResponseEntity<String> response = ResponseEntity.badRequest().body(
                     String.format("Couldn't get token from refresh %s", refreshToken));
+            historyService.log(refreshTokenDto, response, "/refreshtoken");
+            return response;
         }
     }
 
@@ -113,7 +130,11 @@ public class AuthController {
     })
     public ResponseEntity<?> logout(@RequestBody UserDto userDto) {
         refreshTokenService.deleteByUserId(userDto.getUsername());
-        return ResponseEntity.ok(String.format("User %s logged out correctly", userDto.getUsername()));
+
+        ResponseEntity<String> response = ResponseEntity.ok(String.format("User %s logged out correctly", userDto.getUsername()));
+        historyService.log(userDto, response, "/logout");
+
+        return response;
     }
 
 }

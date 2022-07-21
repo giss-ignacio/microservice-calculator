@@ -1,5 +1,6 @@
 package com.tenpo.calculator.calculator.application;
 
+import com.tenpo.calculator.history.model.HistoryService;
 import com.tenpo.calculator.model.CalculatorService;
 import com.tenpo.calculator.model.SumException;
 import io.swagger.annotations.ApiOperation;
@@ -19,6 +20,9 @@ public class CalculatorController {
     @Autowired
     private CalculatorService calculatorService;
 
+    @Autowired
+    private HistoryService historyService;
+
     @RequestMapping(value = "/sum-numbers", method = RequestMethod.POST)
     @ResponseBody
     @ApiOperation(value = "Add two numbers. Returns the result of the sum. Needs authentication.",
@@ -34,14 +38,14 @@ public class CalculatorController {
             calculatorResponseDto.setNumbersSum(
                     calculatorService.sum(sumRequest.getNumbers())
             );
-            return  ResponseEntity.ok(calculatorResponseDto);
+            ResponseEntity<CalculatorResponseDto> response = ResponseEntity.ok(calculatorResponseDto);
+            historyService.log(sumRequest, response, "/sum-numbers");
+            return response;
         } catch (SumException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            ResponseEntity<String> response = ResponseEntity.badRequest().body(e.getMessage());
+            historyService.log(sumRequest, response, "/sum-numbers");
+            return response;
         }
     }
 
-    @RequestMapping(value = "/goodbye", method = RequestMethod.GET)
-    public String goodbye() {
-        return "Hello goodbye";
-    }
 }
