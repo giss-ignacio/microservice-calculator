@@ -12,4 +12,8 @@ public class CalculatorResponseDto {
     public void setNumbersSum(Double numbersSum) {
         this.numbersSum = numbersSum;
     }
+
+    public Double getNumbersSum() {
+        return numbersSum;
+    }
 }

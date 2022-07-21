@@ -18,6 +18,9 @@ import java.security.Key;
 import java.util.Date;
 
 
+/**
+ * Tool to create and validate JSON Web Tokens (JWT).
+ */
 @Component
 public class JwtTool {
 
@@ -25,9 +28,19 @@ public class JwtTool {
     @Value("${jwtTool.secretKey}")
     private String secretKey;
 
+    /**
+     * The TTL (Time to live) to set the JWT expiration
+     */
     @Value("${jwtTool.ttlMillis}")
     private int ttlMillis;
 
+    /**
+     * Create a new JWT for the given username using the secretKey and TTL specified in the appliction.properties file.
+     *
+     * @param username User to authenticate.
+     *
+     * @return A JWT as String.
+     */
     public String createJWT(String username) {
 
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
@@ -52,7 +65,14 @@ public class JwtTool {
         return builder.compact();
     }
 
-    public boolean validateJwt(String jwt) {
+    /**
+     * Parse and validate the JWT claims to verify if it's valid.
+     *
+     * @param jwt The JWT as String to check.
+     *
+     * @return true if valid, else otherwise.
+     */
+    public boolean isJwtValid(String jwt) {
         try {
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwt);
             return true;
@@ -71,6 +91,13 @@ public class JwtTool {
         return false;
     }
 
+    /**
+     * Decrypt JWT and get the username.
+     *
+     * @param jwt The JWT as string.
+     *
+     * @return The username specified in the JWT.
+     */
     public String getUsernameFromJwt(String jwt) {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwt).getBody().getSubject();
 

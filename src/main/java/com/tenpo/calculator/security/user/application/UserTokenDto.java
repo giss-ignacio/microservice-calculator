@@ -18,4 +18,9 @@ public class UserTokenDto {
         this.jwt = jwt;
         this.refreshToken = refreshToken;
     }
+
+    public String getJwt() {
+        return jwt;
+    }
+
 }

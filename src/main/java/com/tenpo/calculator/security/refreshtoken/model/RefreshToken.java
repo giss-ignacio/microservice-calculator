@@ -11,7 +11,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import java.time.Instant;
 
-
+/**
+ * The refresh token used to generate a new access token. Typically, if the access token has an expiration date,
+ * once it expires, the user would have to authenticate again to obtain an access token.
+ */
 @Entity(name = "refreshtoken")
 public class RefreshToken {
     @Id

@@ -89,7 +89,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 throws ServletException, IOException {
             try {
                 String jwt = parseJwt(request);
-                if (jwt != null && jwtTool.validateJwt(jwt)) {
+                if (jwt != null && jwtTool.isJwtValid(jwt)) {
                     String username = jwtTool.getUsernameFromJwt(jwt);
 
                     UserDetails userDetails = userDetailsService.loadUserByUsername(username);
