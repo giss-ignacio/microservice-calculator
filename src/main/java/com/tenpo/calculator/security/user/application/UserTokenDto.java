@@ -10,8 +10,12 @@ public class UserTokenDto {
     @JsonProperty
     private String jwt;
 
-    public UserTokenDto(String username, String jwt) {
+    @JsonProperty
+    private String refreshToken;
+
+    public UserTokenDto(String username, String jwt, String refreshToken) {
         this.username = username;
         this.jwt = jwt;
+        this.refreshToken = refreshToken;
     }
 }

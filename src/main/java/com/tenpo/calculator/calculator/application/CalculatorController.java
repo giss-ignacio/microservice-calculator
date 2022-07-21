@@ -3,6 +3,8 @@ package com.tenpo.calculator.calculator.application;
 import com.tenpo.calculator.model.CalculatorService;
 import com.tenpo.calculator.model.SumException;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,9 +20,14 @@ public class CalculatorController {
     private CalculatorService calculatorService;
 
     @RequestMapping(value = "/sum-numbers", method = RequestMethod.POST)
+    @ResponseBody
     @ApiOperation(value = "Add two numbers. Returns the result of the sum. Needs authentication.",
             produces = "text/plain")
-    @ResponseBody
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success"),
+            @ApiResponse(code = 400, message = "Bad Request - The sum could not be done"),
+            @ApiResponse(code = 401, message = "Unauthorized - User needs to be logged in")
+    })
     public ResponseEntity<?> sumNumbers(@RequestBody CalculatorRequestDto sumRequest) {
         CalculatorResponseDto calculatorResponseDto = new CalculatorResponseDto();
         try {
