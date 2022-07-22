@@ -6,6 +6,7 @@ import com.tenpo.calculator.model.SumException;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.Authorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,7 +27,9 @@ public class CalculatorController {
     @RequestMapping(value = "/sum-numbers", method = RequestMethod.POST)
     @ResponseBody
     @ApiOperation(value = "Add two numbers. Returns the result of the sum. Needs authentication.",
-            produces = "text/plain")
+            produces = "text/plain",
+            authorizations = {@Authorization(value = "Only logged in users")
+    })
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success"),
             @ApiResponse(code = 400, message = "Bad Request - The sum could not be done"),
