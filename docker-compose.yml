@@ -2,7 +2,7 @@ version: '2.2'
 
 services:
   app:
-    image: 'tenpo-calculator-service:latest'
+    image: 'app:latest'
     build:
       context: .
     container_name: app
@@ -10,14 +10,25 @@ services:
       - "8080:8080"
     depends_on:
       - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgres
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=mysecretpassword
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+
 
   db:
     image: 'postgres:13.1-alpine'
     container_name: db
     ports:
-      - 5435:5432
+      - "5435:5432"
     expose:
       - "5435"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=mysecretpassword
+      - POSTGRES_DB=postgres
+      - DATABASE_HOST=localhost
+    volumes:
+      - ./src/main/resources/ddl-init.sql:/docker-entrypoint-initdb.d/ddl-init.sql
+

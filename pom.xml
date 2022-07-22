@@ -19,7 +19,8 @@
         <spring-boot-starter-security.version>2.7.1</spring-boot-starter-security.version>
         <spring-boot-starter-oauth2-resource-server.version>2.7.1</spring-boot-starter-oauth2-resource-server.version>
         <spring-security-test.version>5.7.2</spring-security-test.version>
-
+        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
     </properties>
     <dependencies>
         <dependency>
@@ -95,6 +96,11 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.10.1</version>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
